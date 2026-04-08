@@ -1,0 +1,37 @@
+{
+  "name": "flowise-ocr-automation",
+  "version": "2.0.0",
+  "description": "Event-driven OCR automation pipeline using Flowise, Jira, Confluence and Unstructured.io",
+  "main": "trigger.js",
+  "type": "module",
+  "scripts": {
+    "trigger": "node trigger.js",
+    "agent": "node ocr-agent.js",
+    "webhook": "node webhook-server.js",
+    "setup": "node setup-webhook.js",
+    "poll": "node ocr-agent.js --poll --close",
+    "start": "node webhook-server.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.2",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "form-data": "^4.0.0",
+    "openai": "^4.52.7",
+    "pdf-parse": "^1.1.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "flowise",
+    "ocr",
+    "jira",
+    "confluence",
+    "unstructured",
+    "automation",
+    "webhook",
+    "agentic"
+  ],
+  "license": "MIT"
+}
