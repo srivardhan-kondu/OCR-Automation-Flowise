@@ -271,13 +271,19 @@ WEBHOOK_SECRET=                                      # ← Optional (leave blank
 npm install -g flowise
 ```
 
+
 ### Step 3.2 — Start Flowise
 
 ```bash
-npx flowise start --FLOWISE_USERNAME=admin --FLOWISE_PASSWORD=1234
+npx flowise start
 ```
 
-Flowise opens at **http://localhost:3000**. Log in with `admin` / `1234`.
+Flowise opens at **http://localhost:3000**.
+
+- **First time setup:** Register a new admin account with your email and a password of your choice.
+- **Subsequent runs:** Log in with the credentials you registered.
+
+> **Note:** The `.env` file values for `FLOWISE_USERNAME` and `FLOWISE_PASSWORD` are for reference only. They do not automatically create a user. Each user must register their own admin account on first launch.
 
 ### Step 3.3 — Import the Custom Tools & Chatflow
 
