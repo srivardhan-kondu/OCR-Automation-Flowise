@@ -1,0 +1,12 @@
+{
+  "id": "b8c294ae-0d88-4e40-9586-ebe35089daa9",
+  "name": "confluence_create_page",
+  "description": "Creates a new page in Confluence. Input should be the page title and the HTML content.",
+  "color": "linear-gradient(rgb(217,53,15), rgb(225,95,141))",
+  "iconSrc": "",
+  "schema": "[{\"id\":0,\"property\":\"title\",\"description\":\"Page title\",\"type\":\"string\",\"required\":true},{\"id\":1,\"property\":\"content\",\"description\":\"HTML content for the page\",\"type\":\"string\",\"required\":true}]",
+  "func": "const axios = require('axios');\nconst title = $title;\nconst content = $content;\n\ntry {\n  const auth = 'Basic ' + Buffer.from('YOUR_EMAIL:YOUR_ATLASSIAN_TOKEN').toString('base64');\n  \n  const response = await axios.post('https://srivardhan.atlassian.net/wiki/rest/api/content', {\n    title: title,\n    type: \"page\",\n    space: { key: \"SCRUM\" },\n    body: {\n      storage: {\n        value: `<div>${content}</div>`,\n        representation: \"storage\"\n      }\n    }\n  }, {\n    headers: {\n      'Authorization': auth,\n      'Content-Type': 'application/json'\n    }\n  });\n  \n  return \"SUCCESS: Confluence page created: \" + response.data._links.base + response.data._links.webui;\n} catch (error) {\n  return \"ERROR: \" + (error.response ? JSON.stringify(error.response.data) : error.message);\n}\n",
+  "createdDate": "2026-04-09 12:44:13",
+  "updatedDate": "2026-04-09 12:48:10",
+  "workspaceId": "b98576db-12a0-4119-b3ac-086adf48e9a4"
+}

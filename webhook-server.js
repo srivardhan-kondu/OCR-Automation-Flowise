@@ -201,8 +201,39 @@ app.post('/webhook/confluence', (req, res) => {
   res.status(200).json({ status: 'received' });
 });
 
+// PDF OCR Endpoint (bypasses Flowise vm2 sandbox)
+app.post('/api/ocr', async (req, res) => {
+  try {
+    const { url } = req.body;
+    if (!url) return res.status(400).json({ error: 'Missing attachment URL' });
+    
+    console.log(`${c.cyan}ℹ${c.reset}  Downloading and scanning PDF: ${url}`);
+    
+    const auth = 'Basic ' + Buffer.from(process.env.ATLASSIAN_EMAIL + ':' + process.env.ATLASSIAN_TOKEN).toString('base64');
+    
+    const fileResponse = await axios.get(url, {
+      responseType: 'arraybuffer',
+      headers: { 'Authorization': auth }
+    });
+    
+    const pdfParse = (await import('pdf-parse')).default;
+    const pdfData = await pdfParse(Buffer.from(fileResponse.data));
+    
+    if (pdfData.text && pdfData.text.trim().length > 10) {
+      console.log(`${c.green}✔${c.reset}  PDF text extracted successfully`);
+      res.json({ text: pdfData.text });
+    } else {
+      console.log(`${c.yellow}⚠${c.reset}  PDF contains no standard text (might be a scanned image)`);
+      res.status(400).json({ error: 'No readable text in PDF.' });
+    }
+  } catch (error) {
+    console.error(`${c.red}✘${c.reset}  OCR Failed: ${error.message}`);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // ─── Server Startup ──────────────────────────────────────────────────────────
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, "127.0.0.1", () => {
   console.log(`\n${c.bold}${c.green}╔═══════════════════════════════════════════════════╗${c.reset}`);
   console.log(`${c.bold}${c.green}║   🤖 Flowise OCR Webhook Server                  ║${c.reset}`);
   console.log(`${c.bold}${c.green}╠═══════════════════════════════════════════════════╣${c.reset}`);

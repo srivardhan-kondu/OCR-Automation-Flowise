@@ -1,0 +1,12 @@
+{
+  "id": "8f447c0e-377e-4d5c-ae2f-37a8d3f29a1e",
+  "name": "jira_fetch_issue",
+  "description": "Use this tool to fetch details of a Jira ticket. Pass the Jira issue ID (e.g. SCRUM-2) as the issueId input.",
+  "color": "linear-gradient(rgb(154,231,107), rgb(247,125,78))",
+  "iconSrc": "",
+  "schema": "[{\"id\":0,\"property\":\"ticket\",\"description\":\"The exact Jira ticket ID, like SCRUM-2\",\"type\":\"string\",\"required\":true}]",
+  "func": "const axios = require('axios');\nconst issueId = $ticket;\ntry {\n  const auth = 'Basic ' + Buffer.from('YOUR_EMAIL:YOUR_ATLASSIAN_TOKEN').toString('base64');\n  \n  const res = await axios.get(`https://srivardhan.atlassian.net/rest/api/3/issue/${issueId}`, {\n    headers: { 'Authorization': auth, 'Accept': 'application/json' }\n  });\n  \n  const json = res.data;\n  const summary = json.fields.summary || \"No Summary\";\n  const status = json.fields.status?.name || \"Unknown Status\";\n  const labels = json.fields.labels ? json.fields.labels.join(', ') : \"None\";\n  const attachments = (json.fields.attachment || []).map(a => {\n      return `\\n- Name: ${a.filename}\\n  URL: ${a.content}`;\n  }).join('');\n  \n  return `ISSUE: ${issueId}\\nSUMMARY: ${summary}\\nSTATUS: ${status}\\nLABELS: ${labels}\\nATTACHMENTS: ${attachments || 'None'}`;\n} catch (e) {\n  return \"ERROR: \" + (e.response ? e.response.status : e.message);\n}\n",
+  "createdDate": "2026-04-09 11:20:00",
+  "updatedDate": "2026-04-09 11:54:18",
+  "workspaceId": "b98576db-12a0-4119-b3ac-086adf48e9a4"
+}

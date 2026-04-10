@@ -279,14 +279,15 @@ npx flowise start --FLOWISE_USERNAME=admin --FLOWISE_PASSWORD=1234
 
 Flowise opens at **http://localhost:3000**. Log in with `admin` / `1234`.
 
-### Step 3.3 — Import the Agentic Flow
+### Step 3.3 — Import the Custom Tools & Chatflow
 
 1. Open **http://localhost:3000** in your browser
-2. Click **Chatflows** in the left sidebar
-3. Click **+ Add New** (top right)
-4. Click the **⋮ menu** (three dots, top right) → **Load Chatflow**
-5. Select the file: `flowise-flow.json`
-6. The canvas should show **7 nodes** connected to the Tool Agent
+2. First, go to **Tools** in the left sidebar
+3. Click **Load** (top right icon) and select all four JSON files located in the `tools/` folder.
+4. Next, go to **Chatflows** in the left sidebar
+5. Click **+ Add New** (top right)
+6. Click the **⋮ menu** (three dots, top right) → **Load Chatflow**
+7. Select the file: `flowise-flow.json`
 
 ### Step 3.4 — Configure the OpenAI Credential
 
@@ -314,65 +315,17 @@ You need to set up a **Jira API Credential** and apply it to BOTH Jira nodes.
 7. Select the **same credential** (`Jira API`) from the dropdown
 8. **Set the Host field**: `https://yourcompany.atlassian.net`
 
-### Step 3.6 — Configure the Confluence POST Tool
+### Step 3.6 — Enter Atlassian Credentials in Custom Tools
 
-1. Click the **Confluence POST (Create Page)** node
-2. Set the **URL** field to:
-   ```
-   https://yourcompany.atlassian.net/wiki/rest/api/content
-   ```
-3. In **Headers** (click "Additional Parameters" if hidden), set:
-   ```json
-   {
-     "Authorization": "Basic BASE64_ENCODED_EMAIL_TOKEN",
-     "Content-Type": "application/json",
-     "Accept": "application/json"
-   }
-   ```
+Because Flowise custom tools run inside a protected sandbox, they use raw Javascript to make secure fetch requests. 
 
-   To get the Base64 value, run:
-   ```bash
-   echo -n "your@email.com:YOUR_API_TOKEN" | base64
-   ```
-   Then replace `BASE64_ENCODED_EMAIL_TOKEN` with the output.
+Since you imported the tools from JSON files, you must replace the placeholder variables inside their code with your real instance credentials.
 
-### Step 3.7 — Configure the Custom OCR Tool
-
-The Custom Tool (OCR) needs Flowise **Variables** to access your API keys:
-
-1. Go to **Flowise sidebar** → **Tools** → **+ Add New**
-2. Set:
-   - **Name**: `ocr_extract_text`
-   - **Description**: `Extract text from a PDF or image file. Input should be the download URL of the file attachment.`
-   - **Schema**: 
-     ```json
-     {
-       "fileUrl": {
-         "type": "string",
-         "description": "The direct download URL of the PDF or image file to OCR",
-         "required": true
-       },
-       "filename": {
-         "type": "string",
-         "description": "The original filename of the attachment",
-         "required": true
-       }
-     }
-     ```
-   - **JavaScript Function**: Paste the function from `flowise-flow.json` → `customTool_ocr` → `customToolFunc`
-3. Click **Save**
-4. Go back to your chatflow → click the **Custom Tool** node → select `ocr_extract_text`
-
-Also set up **Flowise Variables** so the Custom Tool can access your credentials:
-1. Go to **Flowise sidebar** → **Variables** (or Settings → Variables)
-2. Add these variables:
-
-   | Variable Name | Value |
-   |--------------|-------|
-   | `ATLASSIAN_EMAIL` | your@email.com |
-   | `ATLASSIAN_TOKEN` | your API token |
-   | `UNSTRUCTURED_API_KEY` | your Unstructured key |
-   | `UNSTRUCTURED_API_URL` | https://api.unstructured.io/general/v0/general |
+1. Go to **Flowise sidebar** → **Tools**
+2. Click the edit icon for each of the 4 imported tools (`ocr_extract_text`, `confluence_create_page`, `jira_fetch_issue`, `jira_post_and_close`).
+3. For each tool, find any line that says `YOUR_EMAIL:YOUR_ATLASSIAN_TOKEN` and replace it with your actual email and API token (e.g., `john@company.com:ATATT3x...`).
+4. Find any line that says `https://srivardhan.atlassian.net` and replace `srivardhan` with your actual Atlassian subdomain (if applicable).
+5. Click **Save** on each tool.
 
 ### Step 3.8 — Save and Get the Chatflow ID
 
