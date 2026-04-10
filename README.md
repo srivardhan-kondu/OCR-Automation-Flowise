@@ -315,17 +315,18 @@ You need to set up a **Jira API Credential** and apply it to BOTH Jira nodes.
 7. Select the **same credential** (`Jira API`) from the dropdown
 8. **Set the Host field**: `https://yourcompany.atlassian.net`
 
-### Step 3.6 — Enter Atlassian Credentials in Custom Tools
+### Step 3.6 — Register Custom Tool Variables in Flowise
 
 Because Flowise custom tools run inside a protected sandbox, they use raw Javascript to make secure fetch requests. 
 
-Since you imported the tools from JSON files, you must replace the placeholder variables inside their code with your real instance credentials.
+Instead of hardcoding your secrets into the tool codes, the tools are pre-configured to use **Flowise Variables** (`$vars`).
 
-1. Go to **Flowise sidebar** → **Tools**
-2. Click the edit icon for each of the 4 imported tools (`ocr_extract_text`, `confluence_create_page`, `jira_fetch_issue`, `jira_post_and_close`).
-3. For each tool, find any line that says `YOUR_EMAIL:YOUR_ATLASSIAN_TOKEN` and replace it with your actual email and API token (e.g., `john@company.com:ATATT3x...`).
-4. Find any line that says `https://srivardhan.atlassian.net` and replace `srivardhan` with your actual Atlassian subdomain (if applicable).
-5. Click **Save** on each tool.
+1. Go to **Flowise sidebar** → **Variables**
+2. Click **+ Add New** and create the following three variables (set their Type to `String`):
+   - **Variable Name**: `ATLASSIAN_EMAIL` | **Value**: Your login email (e.g. `john@company.com`)
+   - **Variable Name**: `ATLASSIAN_TOKEN` | **Value**: Your Atlassian API token
+   - **Variable Name**: `ATLASSIAN_HOST`  | **Value**: Your Atlassian site URL without a trailing slash (e.g. `https://yourcompany.atlassian.net`)
+3. The custom tools will now securely and automatically pull these variables when executing!
 
 ### Step 3.8 — Save and Get the Chatflow ID
 
